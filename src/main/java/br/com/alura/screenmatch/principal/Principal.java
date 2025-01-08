@@ -19,6 +19,7 @@ public class Principal {
             6) Top 5 séries
             7) Buscar séries por categoria
             8) Filtrar séries
+            9) Buscar episódio por trecho
             
             0) Sair
             """;
@@ -75,12 +76,29 @@ public class Principal {
                 case 8:
                     buscarSeriePorMaxTempEAval();
                     break;
+                case 9:
+                    buscarEpisodioPorTrecho();
+                    break;
                 default:
                     System.out.println(entradaUsuario);
                     System.out.println("Opção Inválida!\n");
                     break;
             }
         }
+    }
+
+    private void buscarEpisodioPorTrecho() {
+        System.out.println("Digite o nome do episódio para busca: ");
+        var nomeDoEpisodio = leitura.nextLine();
+
+        List<Episodio> episodiosEncontrados = repository.filtrarEpisodioPorNome(nomeDoEpisodio);
+
+        episodiosEncontrados.forEach(e ->
+                        System.out.printf("Série: %s Temporada %s - Episódio %s - %s\n",
+                        e.getSerie().getTitulo(), e.getTemporada(),
+                        e.getNumeroEpisodio(), e.getTitulo())
+                        );
+
     }
 
     private void listarSeriesBuscadas() {
@@ -187,12 +205,12 @@ public class Principal {
         System.out.println("Digite a quantidade máxima de temporadas das séries que você deseja buscar: ");
         var quantDeTemporadas = leitura.nextInt();
 
-        System.out.println("Digite a avaliação máxima das séries a serem buscadas: ");
+        System.out.println("Digite a avaliação mínima das séries a serem buscadas: ");
         var avaliacao = leitura.nextDouble();
 
 
         List<Serie> series = repository.filtrarSerie(quantDeTemporadas, avaliacao);
-        series.forEach(System.out::println);
+        series.forEach(s -> System.out.println(s.getAtores() + " - Avaliação: " + s.getAvaliacao()));
     }
 }
 //        for(int i = 0; i < dados.totalTemporadas(); i++){
