@@ -20,6 +20,7 @@ public class Principal {
             7) Buscar séries por categoria
             8) Filtrar séries
             9) Buscar episódio por trecho
+            10) Top 5 episódios
             
             0) Sair
             """;
@@ -27,7 +28,7 @@ public class Principal {
     private Scanner leitura = new Scanner(System.in);
     private ConsumoApi consumo = new ConsumoApi();
     private ConverteDados conversor = new ConverteDados();
-
+    private Optional<Serie> serieBusca;
     private final String ENDERECO = "https://www.omdbapi.com/?t=";
     private final String API_KEY = "&apikey=6585022c";
 
@@ -79,11 +80,24 @@ public class Principal {
                 case 9:
                     buscarEpisodioPorTrecho();
                     break;
+                case 10:
+                    buscarTop5Episodios();
+                    break;
                 default:
                     System.out.println(entradaUsuario);
                     System.out.println("Opção Inválida!\n");
                     break;
             }
+        }
+    }
+
+    private void buscarTop5Episodios() {
+        buscarSeriePorTitulo();
+        if (serieBusca.isPresent()) {
+            Serie serie = serieBusca.get();
+            List<Episodio> topEpisodios = repository.topEpisodiosPorSerie(serie);
+
+            topEpisodios.forEach(System.out::println);
         }
     }
 
@@ -163,10 +177,10 @@ public class Principal {
         System.out.println("Escolha uma série pelo nome: ");
         var nomeSerie = leitura.nextLine();
 
-        Optional<Serie> serieBuscada = repository.findByTituloContainingIgnoreCase(nomeSerie);
+        serieBusca = repository.findByTituloContainingIgnoreCase(nomeSerie);
 
-        if (serieBuscada.isPresent()) {
-            System.out.println("Dados da série: " + serieBuscada.get());
+        if (serieBusca.isPresent()) {
+            System.out.println("Dados da série: " + serieBusca.get());
         } else {
             System.out.println("Série não encontrada!");
         }
